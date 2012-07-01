@@ -42,6 +42,8 @@ class Interface(Frame):
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
         
+        self.bind_class("Text","<Control-a>", self.selectall)
+        
         self.createLoginForm()
         self.createFormatOptions()
         self.createTextArea()
@@ -49,7 +51,10 @@ class Interface(Frame):
         self.addResizingWeights()
         
         self.parsed = False
-
+    
+    def selectall(self, event):
+        event.widget.tag_add("sel","1.0","end")
+    
     def createLoginForm(self):
         '''
         Create a login form in the top right corner of the application window
@@ -144,9 +149,9 @@ class Interface(Frame):
         if not contents:
             tkMessageBox.showerror("No data", "You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.")
         else:
-            self.duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
+            #self.duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
             self.hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Leave blank for 'just now'", initialvalue=000)
-            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.duration, self.hours_ago)
+            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.hours_ago)
         
             if results:
                 self.textarea.delete(1.0, END)

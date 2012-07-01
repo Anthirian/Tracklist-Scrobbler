@@ -31,9 +31,8 @@ class Parser(object):
         self.DVTD = "3 Voor 12 Draait"
         
         
-        longShows = [self.ASOT, self.TATW, self.GDJB]
-        shortShows = [self.TGEP, self.CC, self.MM, self.DVTD]
-        formats = longShows + shortShows
+        self.longShows = [self.ASOT, self.TATW, self.GDJB]
+        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD]
     
     def strip_leading_digits(self, head):
         '''
@@ -260,7 +259,7 @@ class Parser(object):
         
         return trackToScrobble
     
-    def parse_tracklist(self, tracks, podcast, duration, hours_ago):
+    def parse_tracklist(self, tracks, podcast, hours_ago):
         listOfTracks = tracks 
         tracklist = []
         for line in listOfTracks:
@@ -269,7 +268,7 @@ class Parser(object):
             if track:
                 tracklist.append(track)
                     
-        tracklist = self.calculate_timestamps(tracklist, duration, hours_ago)
+        tracklist = self.calculate_timestamps(tracklist, 2 if podcast in self.longShows else 1, hours_ago)
         
         try:
             self.forLastFM, self.forGUI = self.format_tracks(tracklist)
