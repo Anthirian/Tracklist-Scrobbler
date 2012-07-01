@@ -11,6 +11,7 @@ import tkSimpleDialog
 
 from Parser import Parser
 from Scrob import Scrob as Scrobbler
+from pylast import WSError
 
 class AutoScrollbar(Scrollbar):
     # a scrollbar that hides itself if it's not needed.  only
@@ -165,17 +166,20 @@ class Interface(Frame):
     
     def scrobble(self):
         '''
-        Scrobble the tracklist to Last.fm 
+        Scrobble the tracklist to Last.fm
         '''
         if self.parsed:
             user = self.getUser()
             pw = self.getPassword()
-            self.ts.login(user, pw)
-            self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.duration, self.hours_ago)
+            self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.podcast, self.hours_ago)
             if user and pw:
-                #self.textarea.delete(1.0, END) 
-                result = self.ts.scrobble(self.lastfmdata)
-                tkMessageBox.showinfo("Scrobbled successfully", "Scrobbled the following to Last.fm: " + str(result))
+                try:
+                    self.ts.login(user, pw)
+                except WSError, wse:
+                    tkMessageBox.showerror("Authentication failed", "Something went wrong during authentication. Last.fm responded:\n\"%s\"" % wse.details)
+                else:
+                    result = self.ts.scrobble(self.lastfmdata)
+                    tkMessageBox.showinfo("Scrobbled successfully", "Scrobbled the following to Last.fm: " + str(result))
             else:
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:

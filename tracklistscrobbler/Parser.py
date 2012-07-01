@@ -277,7 +277,7 @@ class Parser(object):
         
         return self.forLastFM, self.forGUI
     
-    def parse_user_modifications(self, listOfTracks, duration, hours_ago):
+    def parse_user_modifications(self, listOfTracks, podcast, hours_ago):
         '''
         Check if the user has made modifications to the tracks we parsed and create new Last.fm data from it
         '''
@@ -289,7 +289,7 @@ class Parser(object):
                 track = self.parse_line(line, self.USRMOD)
                 if track:
                     data.append(track)
-            data = self.calculate_timestamps(data, duration, hours_ago)
+            data = self.calculate_timestamps(data, 2 if podcast in self.longShows else 1, hours_ago)
             
             forLastFM, _ = self.format_tracks(data)
             

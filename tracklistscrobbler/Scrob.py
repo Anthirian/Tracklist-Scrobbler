@@ -4,7 +4,7 @@ Created on Mar 27, 2012
 
 @author: Geert
 '''
-from pylast import md5, LastFMNetwork
+from pylast import md5, LastFMNetwork, WSError
 
 class Scrob(object):
     '''
@@ -23,11 +23,15 @@ class Scrob(object):
     def login(self, username, password):
         '''
         Log in using the username and password provided. Use this function before scrobbling.
+        Returns error details in case of failure
         '''
         password_hash = md5(password)
-        self.lastfm = LastFMNetwork(self.API, self.secret, None, username, password_hash)
-        #TODO: get the authenticated user and match with the username variable instead of hardcoding
-        self.authenticated = True
+        try:
+            self.lastfm = LastFMNetwork(self.API, self.secret, None, username, password_hash)
+        except WSError:
+            raise
+        else:
+            self.authenticated = self.lastfm.get_authenticated_user().get_name() == username
     
     def scrobble(self, data):
         '''
@@ -37,5 +41,6 @@ class Scrob(object):
             #self.lastfm.scrobble_many(data)
             print "scrobbling this crap", data
         else:
+            # Throw a WSError instead of printing to the console.
             print "You are not authenticated yet, please use the login function before scrobbling."
         return data
