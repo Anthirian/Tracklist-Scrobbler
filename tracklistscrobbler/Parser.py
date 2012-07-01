@@ -76,10 +76,10 @@ class Parser(object):
         '''
         Parse a record label if present in the title
         '''
-        # Only parse record label when in alternative mode
+        print formatting == self.TATW
         label = ""
-        if formatting is self.TATW or formatting is self.TGEP or formatting is self.ASOT:
-            pattern = re.compile("\(.*?\)" if formatting is self.TATW else "\[.*?\]", flags=re.I)
+        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT:
+            pattern = re.compile("\(.*?\)" if formatting == self.TATW else "\[.*?\]", flags=re.I)
             match = pattern.search(title)
             if match:
                 label = title[match.start() + 1:match.end() - 1]
@@ -91,7 +91,7 @@ class Parser(object):
         Parse a remix if present in the title
         '''
         # To parse a remix or mashup we take everything between the brackets, either round or square
-        pattern = re.compile("\[.*?\]" if formatting is self.TATW else "\(.*?\)", flags=re.I)
+        pattern = re.compile("\[.*?\]" if formatting == self.TATW else "\(.*?\)", flags=re.I)
         match = pattern.search(title)
         remix = ""
         if match:
@@ -199,7 +199,7 @@ class Parser(object):
         '''        
         trackToScrobble = {}
         separators = ['–', '-', '"']
-        print podcast
+        
         # Clean up the line before parsing
         line = line.strip()
         line = self.replace_illegal_characters(line)
@@ -215,11 +215,6 @@ class Parser(object):
             head, _, tail = triple
             # if we have split, tail is non-empty and we should break the loop
             if tail:
-                if sep is '"':
-                    podcast = self.TATW
-                # this dash is also used on lsdb for ASOT, so don't assume it's TGEP
-                #elif sep is "–":
-                    #format = self.TGEP
                 break
         
         # If splitting failed for all separators, assume it is not a track and return nothing
@@ -235,8 +230,8 @@ class Parser(object):
         title = tail.strip()
         #title, mashup = self.find_mashup(title)
         title, album = self.find_album(title)
-        title, label = self.find_label(format, title)
-        title, remix = self.find_remix(format, title)
+        title, label = self.find_label(podcast, title)
+        title, remix = self.find_remix(podcast, title)
         title = title.strip('"')
         
         #mashupTrack = self.parse_line(mashup)
