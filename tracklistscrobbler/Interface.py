@@ -37,6 +37,7 @@ class Interface(Frame):
         Constructor
         '''
         self.p = Parser(self)
+        self.ts = Scrobbler()
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
@@ -46,6 +47,8 @@ class Interface(Frame):
         self.createTextArea()
         self.createButtonsToolbar()
         self.addResizingWeights()
+        
+        self.parsed = False
 
     def createLoginForm(self):
         '''
@@ -118,6 +121,13 @@ class Interface(Frame):
         '''
         return self.passwordField.get()        
     
+    def getTextAreaContents(self):
+        '''
+        Get the contents of the textarea as a list, after filtering for blank lines
+        '''
+        return filter(None, self.textarea.get(1.0, END).split("\n"))
+        
+    
     def parse(self):
         trackFormat = self.podcast.get()
         invoer = self.textarea.get(1.0, END)
@@ -134,38 +144,37 @@ class Interface(Frame):
         if not contents:
             tkMessageBox.showerror("No data", "You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.")
         else:
-            duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
-            hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Leave blank for 'just now'", initialvalue=000)
-            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), duration, hours_ago)
+            self.duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
+            self.hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Leave blank for 'just now'", initialvalue=000)
+            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.duration, self.hours_ago)
         
             if results:
                 self.textarea.delete(1.0, END)
                 for track in results:
                     self.textarea.insert(INSERT, track + "\n")
-                tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please check if they are correct. " + 
-                                                           "When you feel it is correct, you may press the Scrobble button to scrobble the tracks to Last.fm")
+                self.parsed = True
+                tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please correct any wrong tracks. " + 
+                                                           "When you feel it is correct, you may press 'Scrobble' to scrobble the tracks to Last.fm")
             else:
                 tkMessageBox.showerror("No results", "The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist if you can.")
-        
-        #ts.format_tracks("tracks", self.formatting.get())
-        
-        #if tkMessageBox.askyesno("Test", "Test twee"):
-        #    print "Test parseButton"
     
     def scrobble(self):
         '''
         Scrobble the tracklist to Last.fm 
-        '''        
-        user = self.getUser()
-        pw = self.getPassword()
-        ts = Scrobbler(user, pw)
-        if user and pw:
-            #self.textarea.delete(1.0, END) 
-            #ts.scrobble(self.lastfmdata)
-            tkMessageBox.showinfo("Scrobbled successfully", "Wow this is great, everything worked out fine!")
+        '''
+        if self.parsed:
+            user = self.getUser()
+            pw = self.getPassword()
+            self.ts.login(user, pw)
+            self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.duration, self.hours_ago)
+            if user and pw:
+                #self.textarea.delete(1.0, END) 
+                result = self.ts.scrobble(self.lastfmdata)
+                tkMessageBox.showinfo("Scrobbled successfully", "Scrobbled the following to Last.fm: " + str(result))
+            else:
+                tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
-            tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
-            
+            tkMessageBox.showerror("Not parsed yet", "This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.")
 gui = Interface()
 gui.master.title("Tracklist Scrobbler")
 gui.mainloop() 

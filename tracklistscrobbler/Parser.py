@@ -20,6 +20,8 @@ class Parser(object):
         gui = interface
         
         self.UNKNOWN = "ID"
+        self.USRMOD = "User Modified"
+        
         self.ASOT = "A State of Trance"
         self.TATW = "Trance Around The World"
         self.GDJB = "Global DJ Broadcast"
@@ -27,6 +29,7 @@ class Parser(object):
         self.CC = "Corsten's Countdown"
         self.MM = "Moor Music"
         self.DVTD = "3 Voor 12 Draait"
+        
         
         longShows = [self.ASOT, self.TATW, self.GDJB]
         shortShows = [self.TGEP, self.CC, self.MM, self.DVTD]
@@ -76,7 +79,6 @@ class Parser(object):
         '''
         Parse a record label if present in the title
         '''
-        print formatting == self.TATW
         label = ""
         if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT:
             pattern = re.compile("\(.*?\)" if formatting == self.TATW else "\[.*?\]", flags=re.I)
@@ -168,7 +170,9 @@ class Parser(object):
         try:
             totalLength = duration * 3600
         except ValueError:
-            print "You have not entered a correct duration!"
+            totalLength = 0
+        except TypeError:
+            totalLength = 0
         else:
             try:
                 offset = hours_ago * 3600
@@ -196,47 +200,51 @@ class Parser(object):
         '''
         Parses a given line into a series of variables to be used in a format_tracks
         These variables include artist, title, record label and remix
-        '''        
-        trackToScrobble = {}
-        separators = ['–', '-', '"']
+        '''
+        if not podcast == self.USRMOD:
+            trackToScrobble = {}
+            separators = ['–', '-', '"']
+            
+            # Clean up the line before parsing
+            line = line.strip()
+            line = self.replace_illegal_characters(line)
+            line = self.remove_special_track_info(line)
+            
+            # Check if the line was blank
+            if not line:
+                return trackToScrobble
+            
+            # Split the line into the artist (head) and into the title, album and label (tail)
+            for sep in separators:
+                triple = line.partition(sep)
+                head, _, tail = triple
+                # if we have split, tail is non-empty and we should break the loop
+                if tail:
+                    break
+            
+            # If splitting failed for all separators, assume it is not a track and return nothing
+            if not tail:
+                return trackToScrobble
+            
+            # Parse the artist and any featured or presented artists
+            artist = self.strip_leading_digits(head)
+            artist, featured = self.find_featured_artists(artist)
+            artist, presents = self.find_presented_artist(artist)
+            
+            # Parse the title into title, album, record label and remix and clean up all the parts
+            title = tail.strip()
+            #title, mashup = self.find_mashup(title)
+            title, album = self.find_album(title)
+            title, label = self.find_label(podcast, title)
+            title, remix = self.find_remix(podcast, title)
+            title = title.strip('"')
+            
+            #mashupTrack = self.parse_line(mashup)
+        else:
+            #TODO: Parse tracks that are already close to the wanted format
+            return []
         
-        # Clean up the line before parsing
-        line = line.strip()
-        line = self.replace_illegal_characters(line)
-        line = self.remove_special_track_info(line)
-        
-        # Check if the line was blank
-        if not line:
-            return trackToScrobble
-        
-        # Split the line into the artist (head) and into the title, album and label (tail)
-        for sep in separators:
-            triple = line.partition(sep)
-            head, _, tail = triple
-            # if we have split, tail is non-empty and we should break the loop
-            if tail:
-                break
-        
-        # If splitting failed for all separators, assume it is not a track and return nothing
-        if not tail:
-            return trackToScrobble
-        
-        # Parse the artist and any featured or presented artists
-        artist = self.strip_leading_digits(head)
-        artist, featured = self.find_featured_artists(artist)
-        artist, presents = self.find_presented_artist(artist)
-        
-        # Parse the title into title, album, record label and remix and clean up all the parts
-        title = tail.strip()
-        #title, mashup = self.find_mashup(title)
-        title, album = self.find_album(title)
-        title, label = self.find_label(podcast, title)
-        title, remix = self.find_remix(podcast, title)
-        title = title.strip('"')
-        
-        #mashupTrack = self.parse_line(mashup)
-        
-        # Add all the gathered information to the track we want to format_tracks
+        # Finally add all the gathered information to the track we want to format_tracks
         trackToScrobble['artist'] = artist
         trackToScrobble['featured'] = featured
         trackToScrobble['title'] = title
@@ -263,9 +271,30 @@ class Parser(object):
                     
         tracklist = self.calculate_timestamps(tracklist, duration, hours_ago)
         
-        forLastFM, forGUI = self.format_tracks(tracklist)
+        try:
+            self.forLastFM, self.forGUI = self.format_tracks(tracklist)
+        except TypeError:
+            return [], []
         
-        return forLastFM, forGUI
+        return self.forLastFM, self.forGUI
+    
+    def parse_user_modifications(self, listOfTracks, duration, hours_ago):
+        '''
+        Check if the user has made modifications to the tracks we parsed and create new Last.fm data from it
+        '''
+        if listOfTracks == self.forGUI:
+            return self.forLastFM
+        else:    
+            data = []
+            for line in listOfTracks:
+                track = self.parse_line(line, self.USRMOD)
+                if track:
+                    data.append(track)
+            data = self.calculate_timestamps(data, duration, hours_ago)
+            
+            forLastFM, _ = self.format_tracks(data)
+            
+            return forLastFM
     
     def format_tracks(self, tracklist):
         '''
@@ -305,4 +334,4 @@ class Parser(object):
                 forGUI.append(parsedTrack)
                 forLastFM.append(trackToScrobble)
         
-        return forLastFM, forGUI            
+        return forLastFM, forGUI
