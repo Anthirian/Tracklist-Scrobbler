@@ -1,0 +1,28 @@
+#  Compiled source   #
+######################
+*.py[co]
+
+#  IDE specific      #
+######################
+*.txt
+*.bak
+*.tmp
+*.wpr
+*.settings
+*.project
+*.cproject
+*.pydevproject
+*.tmproj
+*.tmproject
+*.sw?
+
+# OS generated files #
+######################
+.Spotlight-V100
+.Trashes
+.DS_Store
+desktop.ini
+ehthumbs.db
+Thumbs.db
+.directory
+*~
