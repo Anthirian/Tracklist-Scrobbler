@@ -1,3 +1,4 @@
+#encoding: utf-8
 '''
 Created on Jun 28, 2012
 
@@ -8,6 +9,7 @@ from ttk import *
 import tkMessageBox
 import tkSimpleDialog
 
+from Parser import Parser
 from Scrob import Scrob as Scrobbler
 
 class AutoScrollbar(Scrollbar):
@@ -34,7 +36,7 @@ class Interface(Frame):
         '''
         Constructor
         '''
-        self.ts = Scrobbler("geertsmelt", "GerritAdriaan")
+        self.p = Parser(self)
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
@@ -65,17 +67,17 @@ class Interface(Frame):
 
     def createFormatOptions(self):
         self.options = Frame(self)
-        self.keuze = StringVar()
+        self.podcast = StringVar()
         
         #TODO: make track format display use a predetermined list
         Label(self.options, text="Please select the correct podcast below:", font="Candara").grid(pady=5, padx=5)
         
-        Radiobutton(self.options, text="A State of Trance", value="A State of Trance", variable=self.keuze).grid(sticky=N + W)
-        Radiobutton(self.options, text="Trance Around The World", value="Trance Around The World", variable=self.keuze).grid(sticky=N + W)
-        Radiobutton(self.options, text="The Gareth Emery Podcast", value="The Gareth Emery Podcast", variable=self.keuze).grid(sticky=N + W)
-        Radiobutton(self.options, text="Moor Music", value="Moor Music", variable=self.keuze).grid(sticky=N + W)
-        Radiobutton(self.options, text="Corsten's Countdown", value="Corsten's Countdown", variable=self.keuze).grid(sticky=N + W)
-        Radiobutton(self.options, text="3Voor12 Draait", value="3Voor12 Draait", variable=self.keuze).grid(sticky=N + W)
+        Radiobutton(self.options, text="A State of Trance", value="A State of Trance", variable=self.podcast).grid(sticky=N + W)
+        Radiobutton(self.options, text="Trance Around The World", value="Trance Around The World", variable=self.podcast).grid(sticky=N + W)
+        Radiobutton(self.options, text="The Gareth Emery Podcast", value="The Gareth Emery Podcast", variable=self.podcast).grid(sticky=N + W)
+        Radiobutton(self.options, text="Moor Music", value="Moor Music", variable=self.podcast).grid(sticky=N + W)
+        Radiobutton(self.options, text="Corsten's Countdown", value="Corsten's Countdown", variable=self.podcast).grid(sticky=N + W)
+        Radiobutton(self.options, text="3Voor12 Draait", value="3Voor12 Draait", variable=self.podcast).grid(sticky=N + W)
         
         self.options.grid(row=1, column=0, padx=20, sticky=N)
 
@@ -117,7 +119,7 @@ class Interface(Frame):
         return self.passwordField.get()        
     
     def parse(self):
-        trackFormat = self.keuze.get()
+        trackFormat = self.podcast.get()
         invoer = self.textarea.get(1.0, END)
         if not trackFormat:
             tkMessageBox.showerror("Format not specified", "You forgot to select a podcast type to parse. " + 
@@ -134,22 +136,14 @@ class Interface(Frame):
         else:
             duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
             hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Leave blank for 'just now'", initialvalue=000)
-            self.lastfmdata, results = self.ts.parse_tracklist(contents, duration, hours_ago)
+            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), duration, hours_ago)
         
             if results:
                 self.textarea.delete(1.0, END)
                 for track in results:
                     self.textarea.insert(INSERT, track + "\n")
-                readyToScrobble = tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please check if they are correct. " + 
+                tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please check if they are correct. " + 
                                                            "When you feel it is correct, you may press the Scrobble button to scrobble the tracks to Last.fm")
-                print readyToScrobble
-                if readyToScrobble == "yes":
-                    try:
-                        self.ts.scrobble(self.lastfmdata)#, self.getUser(), self.getPassword())
-                    except:
-                        raise
-                    else:
-                        tkMessageBox.showinfo("Success!", "All tracks were correctly scrobbled to Last.fm.")
             else:
                 tkMessageBox.showerror("No results", "The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist if you can.")
         
@@ -159,11 +153,16 @@ class Interface(Frame):
         #    print "Test parseButton"
     
     def scrobble(self):
+        '''
+        Scrobble the tracklist to Last.fm 
+        '''        
         user = self.getUser()
         pw = self.getPassword()
+        ts = Scrobbler(user, pw)
         if user and pw:
-            self.textarea.delete(1.0, END) 
-            self.textarea.insert(INSERT, "You entered the following credentials:\nUsername:\t%s\nPassword:\t%s" % (user, pw))
+            #self.textarea.delete(1.0, END) 
+            #ts.scrobble(self.lastfmdata)
+            tkMessageBox.showinfo("Scrobbled successfully", "Wow this is great, everything worked out fine!")
         else:
             tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
             

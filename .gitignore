@@ -1,6 +1,7 @@
 #  Compiled source   #
 ######################
-*.py[co]
+*.pyc
+*.pyo
 
 #  IDE specific      #
 ######################
