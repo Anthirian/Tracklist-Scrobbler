@@ -104,6 +104,10 @@ class Interface(Frame):
         self.textarea = Text(self, height=35, width=100, padx=5, pady=5)
         self.textarea.insert("end", "Please paste your tracklist here\n\nOnly use one line per track!")
         self.textarea.grid(row=1, column=1, columnspan=2, sticky=N + S + E + W)
+        
+        sb = AutoScrollbar(self)
+        sb.grid(row=1, column=3, sticky=N+S, rowspan=2)
+        self.textarea.config(yscrollcommand=sb.set)
 
 
     def createButtonsToolbar(self):
