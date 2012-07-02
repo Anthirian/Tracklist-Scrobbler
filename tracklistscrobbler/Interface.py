@@ -42,11 +42,12 @@ class Interface(Frame):
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
-        
+        self.master.iconbitmap("favicon.ico")
         self.bind_class("Text","<Control-a>", self.selectall)
         
         self.createLoginForm()
         self.createFormatOptions()
+        self.createImage()
         self.createTextArea()
         self.createButtonsToolbar()
         self.addResizingWeights()
@@ -73,18 +74,22 @@ class Interface(Frame):
         self.passwordField.grid(row=0, column=4)
         
         self.loginDetails.grid(row=0, column=1, columnspan=2, pady=10, padx=8, sticky=E)
-
+    
+    def createImage(self):
+        self.logo = PhotoImage(file="audioscrobbler_small.gif")
+        picture = Label(self, image=self.logo)
+        picture.grid(row=2, column=0, pady=15, sticky=S)
+    
     def createFormatOptions(self):
         self.options = Frame(self)
         self.podcast = StringVar()
         
-        Label(self.options, text="Please select the correct podcast below:", font="Candara").grid(pady=5, padx=5)
+        Label(self.options, text="Please select the correct podcast below:", font="Cambria").grid(pady=5, padx=5)
         
         supportedPodcasts = self.p.get_supported_podcasts()
         for name in supportedPodcasts:
             Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W)
         self.options.grid(row=1, column=0, padx=20, sticky=N)
-
 
     def addResizingWeights(self):
         top = self.winfo_toplevel()
@@ -92,13 +97,13 @@ class Interface(Frame):
         top.columnconfigure(0, weight=1)
         
         self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=10)
         self.columnconfigure(1, weight=1)
-
 
     def createTextArea(self):
         self.textarea = Text(self, height=35, width=100, padx=5, pady=5)
         self.textarea.insert("end", "Please paste your tracklist here\n\nOnly use one line per track!")
-        self.textarea.grid(row=1, column=1, columnspan=2, sticky=N + S + E + W)
+        self.textarea.grid(row=1, column=1, rowspan=2, columnspan=2, sticky=N + S + E + W)
         
         sb = AutoScrollbar(self)
         sb.grid(row=1, column=3, sticky=N+S, rowspan=2)
@@ -183,6 +188,7 @@ class Interface(Frame):
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
             tkMessageBox.showerror("Not parsed yet", "This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.")
+
 gui = Interface()
 gui.master.title("Tracklist Scrobbler")
 gui.mainloop() 

@@ -38,8 +38,8 @@ class Scrob(object):
         Scrobble a list of dicts that each contain a single parsed track to Last.fm
         '''
         if self.authenticated:
-            #self.lastfm.scrobble_many(data)
-            print "scrobbling this crap", data
+            self.lastfm.scrobble_many(data)
+            #print "scrobbling this crap", data
         else:
             # Throw a WSError instead of printing to the console.
             print "You are not authenticated yet, please use the login function before scrobbling."
