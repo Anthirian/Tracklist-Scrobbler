@@ -205,6 +205,7 @@ class Parser(object):
         Parses a given line into a series of variables to be used in a format_tracks
         These variables include artist, title, record label and remix
         '''
+        album, remix, label = "", "", ""
         if not podcast == self.USRMOD:
             trackToScrobble = {}
             separators = ['–', '-', '"']
@@ -238,10 +239,13 @@ class Parser(object):
             # Parse the title into title, album, record label and remix and clean up all the parts
             title = tail.strip()
             #title, mashup = self.find_mashup(title)
-            title, album = self.find_album(title)
-            title, label = self.find_label(podcast, title)
-            title, remix = self.find_remix(podcast, title)
-            title = title.strip('"')
+            
+            # 3 Voor 12 Draait doesn't add album, remix and label information to their tracklist, so don't try to parse it
+            if not podcast == self.DVTD:
+                title, album = self.find_album(title)
+                title, label = self.find_label(podcast, title)
+                title, remix = self.find_remix(podcast, title)
+                title = title.strip('"')
             
             #mashupTrack = self.parse_line(mashup)
         else:
