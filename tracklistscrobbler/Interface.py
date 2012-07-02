@@ -78,16 +78,11 @@ class Interface(Frame):
         self.options = Frame(self)
         self.podcast = StringVar()
         
-        #TODO: make track format display use a predetermined list
         Label(self.options, text="Please select the correct podcast below:", font="Candara").grid(pady=5, padx=5)
         
-        Radiobutton(self.options, text="A State of Trance", value="A State of Trance", variable=self.podcast).grid(sticky=N + W)
-        Radiobutton(self.options, text="Trance Around The World", value="Trance Around The World", variable=self.podcast).grid(sticky=N + W)
-        Radiobutton(self.options, text="The Gareth Emery Podcast", value="The Gareth Emery Podcast", variable=self.podcast).grid(sticky=N + W)
-        Radiobutton(self.options, text="Moor Music", value="Moor Music", variable=self.podcast).grid(sticky=N + W)
-        Radiobutton(self.options, text="Corsten's Countdown", value="Corsten's Countdown", variable=self.podcast).grid(sticky=N + W)
-        Radiobutton(self.options, text="3Voor12 Draait", value="3Voor12 Draait", variable=self.podcast).grid(sticky=N + W)
-        
+        supportedPodcasts = self.p.get_supported_podcasts()
+        for name in supportedPodcasts:
+            Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W)
         self.options.grid(row=1, column=0, padx=20, sticky=N)
 
 

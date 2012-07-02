@@ -30,9 +30,14 @@ class Parser(object):
         self.MM = "Moor Music"
         self.DVTD = "3 Voor 12 Draait"
         
-        
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
         self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD]
+    
+    def get_supported_podcasts(self):
+        '''
+        Get a list of podcasts that are supported by the parser.
+        '''
+        return self.longShows + self.shortShows 
     
     def strip_leading_digits(self, head):
         '''
