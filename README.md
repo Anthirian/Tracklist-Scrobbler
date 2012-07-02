@@ -1,3 +1,12 @@
 Tracklist Scrobbler is an application that allows you to scrobble a podcast's tracklist to last.fm.
 
-More info to be added.
+It currently is able to parse the following podcasts' tracklists:
+- Trance Around The World
+- A State of Trance
+- The Gareth Emery Podcast
+- Corsten's Countdown
+- Moor Music
+- 3Voor12 Draait
+
+Future ideas:
+- Retrieve a podcast's tracklist from the internet automatically before parsing
