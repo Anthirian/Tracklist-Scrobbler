@@ -13,12 +13,10 @@ class Parser(object):
     '''
     
 
-    def __init__(self, interface):
+    def __init__(self):
         '''
         Constructor
-        '''
-        gui = interface
-        
+        '''        
         self.UNKNOWN = "ID"
         self.USRMOD = "User Modified"
         

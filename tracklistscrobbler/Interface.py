@@ -37,13 +37,13 @@ class Interface(Frame):
         '''
         Constructor
         '''
-        self.p = Parser(self)
+        self.p = Parser()
         self.ts = Scrobbler()
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
         self.master.iconbitmap("favicon.ico")
-        self.bind_class("Text","<Control-a>", self.selectall)
+        self.bind_class("Text","<Control-a>", self.select_all)
         
         self.createLoginForm()
         self.createFormatOptions()
@@ -54,7 +54,7 @@ class Interface(Frame):
         
         self.parsed = False
     
-    def selectall(self, event):
+    def select_all(self, event):
         event.widget.tag_add("sel","1.0","end")
     
     def createLoginForm(self):
