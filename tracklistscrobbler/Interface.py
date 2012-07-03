@@ -84,11 +84,11 @@ class Interface(Frame):
         self.options = Frame(self)
         self.podcast = StringVar()
         
-        Label(self.options, text="Please select the correct podcast below:", font="Cambria").grid(pady=5, padx=5)
+        Label(self.options, text="Please select the correct podcast below:", font="Cambria").grid(pady=5)
         
         supportedPodcasts = self.p.get_supported_podcasts()
         for name in supportedPodcasts:
-            Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W)
+            Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W, padx=5)
         self.options.grid(row=1, column=0, padx=20, sticky=N)
 
     def addResizingWeights(self):
@@ -103,7 +103,7 @@ class Interface(Frame):
     def createTextArea(self):
         self.textarea = Text(self, height=35, width=100, padx=5, pady=5)
         self.textarea.insert("end", "Please paste your tracklist here\n\nOnly use one line per track!")
-        self.textarea.grid(row=1, column=1, rowspan=2, columnspan=2, sticky=N + S + E + W)
+        self.textarea.grid(row=1, column=1, rowspan=2, columnspan=2, sticky=N+S+E+W)
         
         sb = AutoScrollbar(self)
         sb.grid(row=1, column=3, sticky=N+S, rowspan=2)
@@ -111,12 +111,12 @@ class Interface(Frame):
 
 
     def createButtonsToolbar(self):
-        self.parseButton = Button(self, text="Parse", command=self.parse, width=30)
         self.scrobbleButton = Button(self, text="Scrobble", command=self.scrobble, width=30)
+        self.parseButton = Button(self, text="Parse", command=self.parse, width=30)
         self.quitButton = Button(self, text="Quit", command=self.quit)
         
-        self.parseButton.grid(row=7, column=0, sticky=S, padx=5, pady=5)
-        self.scrobbleButton.grid(row=7, column=1, sticky=S, padx=5, pady=5)
+        self.scrobbleButton.grid(row=7, column=0, sticky=S, padx=5, pady=5)
+        self.parseButton.grid(row=7, column=1, sticky=S, padx=5, pady=5)
         self.quitButton.grid(row=7, column=2, sticky=S, padx=5, pady=5)        
     
     def getUser(self):
