@@ -26,10 +26,11 @@ class Parser(object):
         self.TGEP = "The Gareth Emery Podcast"
         self.CC = "Corsten's Countdown"
         self.MM = "Moor Music"
+        self.TCLP = "Tiësto's Club Life Podcast"
         self.DVTD = "3 Voor 12 Draait"
         
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
-        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD]
+        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD, self.TCLP]
     
     def get_supported_podcasts(self):
         '''
@@ -52,7 +53,6 @@ class Parser(object):
         The featured artist is prefixed by any of the following:
         "feat. ", "feat ", "Feat. ", "Feat ", "ft. ", "ft ", "Ft ", "Ft. "
         '''
-        # To do so we match 
         pattern = re.compile(" ?f[ea]*t.?[uring]* ", flags=re.I)
         match = pattern.search(artist)
         # If the artist contains a featuredArtist artist we check which term matched our regex, add that term as featuredArtist artist and remove it from the artist itself

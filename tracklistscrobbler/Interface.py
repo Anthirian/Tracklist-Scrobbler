@@ -136,7 +136,6 @@ class Interface(Frame):
         Get the contents of the textarea as a list, after filtering for blank lines
         '''
         return filter(None, self.textarea.get(1.0, END).split("\n"))
-        
     
     def parse(self):
         trackFormat = self.podcast.get()
