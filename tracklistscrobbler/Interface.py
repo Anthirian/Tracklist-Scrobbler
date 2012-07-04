@@ -9,8 +9,6 @@ from ttk import *
 import tkMessageBox
 import tkSimpleDialog
 
-from Parser import Parser
-from Scrob import Scrob as Scrobbler
 from pylast import WSError
 
 class AutoScrollbar(Scrollbar):

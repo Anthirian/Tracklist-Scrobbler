@@ -1,4 +1,4 @@
-from Scrob import Scrob as Scrobbler
+from Scrobbler import Scrobbler
 from Parser import Parser
 from Interface import Interface
 
@@ -7,4 +7,4 @@ if __name__ == "__main__":
     p = Parser()
     gui = Interface(p, s)
     gui.master.title("Tracklist Scrobbler")
-    gui.mainloop() 
+    gui.mainloop()
