@@ -40,7 +40,7 @@ class Interface(Frame):
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
-        self.master.iconbitmap("favicon.ico")
+        self.master.iconbitmap("images/favicon.ico")
         self.bind_class("Text","<Control-a>", self.select_all)
         
         self.createLoginForm()
@@ -74,7 +74,7 @@ class Interface(Frame):
         self.loginDetails.grid(row=0, column=1, columnspan=2, pady=10, padx=8, sticky=E)
     
     def createImage(self):
-        self.logo = PhotoImage(file="audioscrobbler_small.gif")
+        self.logo = PhotoImage(file="images/audioscrobbler_small.gif")
         picture = Label(self, image=self.logo)
         picture.grid(row=2, column=0, pady=15, sticky=S)
     
