@@ -1,8 +1,10 @@
-from Scrobbler import Scrobbler
+from Scrob import Scrob as Scrobbler
+from Parser import Parser
 from Interface import Interface
 
 if __name__ == "__main__":
-    gui = Interface()
-    
-    #ts = Scrobbler("geertsmelt", "GerritAdriaan")
-    #ts.scrobble("tracklist.txt")
+    s = Scrobbler()
+    p = Parser()
+    gui = Interface(p, s)
+    gui.master.title("Tracklist Scrobbler")
+    gui.mainloop() 

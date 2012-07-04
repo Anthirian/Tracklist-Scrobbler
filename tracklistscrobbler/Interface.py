@@ -33,12 +33,12 @@ class Interface(Frame):
     '''
     classdocs
     '''
-    def __init__(self, master=None):
+    def __init__(self, parser, scrobbler, master=None):
         '''
         Constructor
         '''
-        self.p = Parser()
-        self.ts = Scrobbler()
+        self.p = parser
+        self.ts = scrobbler
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
@@ -145,16 +145,15 @@ class Interface(Frame):
                                    "Without this, the parser cannot parse the tracks properly. " + 
                                    "Please select a podcast type and try again.")
             return
-        invoer = invoer.split("\n")
         
-        # Filter all blank lines
+        # Split on end-of-lines and filter all blank lines
+        invoer = invoer.split("\n")
         contents = filter(None, invoer)
         
         if not contents:
             tkMessageBox.showerror("No data", "You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.")
         else:
-            #self.duration = tkSimpleDialog.askinteger("Podcast duration", "What is the duration of the podcast (in hours)?", parent=self)
-            self.hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Leave blank for 'just now'", initialvalue=000)
+            self.hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now'", initialvalue="0")
             self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.hours_ago)
         
             if results:
@@ -187,7 +186,3 @@ class Interface(Frame):
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
             tkMessageBox.showerror("Not parsed yet", "This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.")
-
-gui = Interface()
-gui.master.title("Tracklist Scrobbler")
-gui.mainloop() 
