@@ -170,12 +170,12 @@ class Parser(object):
         Calculate timestamps to use when scrobbling multiple tracks
         '''
         try:
-            totalLength = duration * 3600
+            totalLength = int(duration * 3600)
         except ValueError:
             totalLength = 0
         except TypeError:
             totalLength = 0
-        else:
+        finally:
             try:
                 offset = hours_ago * 3600
             except ValueError:
@@ -274,8 +274,14 @@ class Parser(object):
             # Test for empty result
             if track:
                 tracklist.append(track)
-                    
-        tracklist = self.calculate_timestamps(tracklist, 2 if podcast in self.longShows else 1, hours_ago)
+        
+        if podcast in self.longShows:
+            duration = 2
+        elif podcast in self.mediumShows:
+            duration = 1.5
+        else:
+            duration = 1
+        tracklist = self.calculate_timestamps(tracklist, duration, hours_ago)
         
         try:
             self.forLastFM, self.forGUI = self.format_tracks(tracklist)
