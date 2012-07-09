@@ -204,18 +204,19 @@ class Parser(object):
         These variables include artist, title, record label and remix
         '''
         album, remix, label = "", "", ""
+        trackToScrobble = {}
+        
+        # Clean up the line before parsing
+        line = line.strip()
+        line = self.replace_illegal_characters(line)
+        line = self.remove_special_track_info(line)
+        
+        # Check if the line was blank
+        if not line:
+            return trackToScrobble
+        
         if not podcast == self.USRMOD:
-            trackToScrobble = {}
             separators = ['–', '-', '"']
-            
-            # Clean up the line before parsing
-            line = line.strip()
-            line = self.replace_illegal_characters(line)
-            line = self.remove_special_track_info(line)
-            
-            # Check if the line was blank
-            if not line:
-                return trackToScrobble
             
             # Split the line into the artist (head) and into the title, album and label (tail)
             for sep in separators:
@@ -248,6 +249,7 @@ class Parser(object):
             #mashupTrack = self.parse_line(mashup)
         else:
             #TODO: Parse tracks that are already close to the wanted format
+            artist, _, title = line.partition("-")
             return []
         
         # Finally add all the gathered information to the track we want to format_tracks
@@ -298,11 +300,19 @@ class Parser(object):
             return self.forLastFM
         else:    
             data = []
+            if podcast in self.longShows:
+                duration = 2
+            elif podcast in self.mediumShows:
+                duration = 1.5
+            else:
+                duration = 1
+                
             for line in listOfTracks:
                 track = self.parse_line(line, self.USRMOD)
                 if track:
                     data.append(track)
-            data = self.calculate_timestamps(data, 2 if podcast in self.longShows else 1, hours_ago)
+                        
+            data = self.calculate_timestamps(data, duration, hours_ago)
             
             forLastFM, _ = self.format_tracks(data)
             
