@@ -9,7 +9,7 @@ from ttk import *
 import tkMessageBox
 import tkSimpleDialog
 
-from pylast import WSError
+from pylast import WSError, NetworkError, MalformedResponseError
 
 class AutoScrollbar(Scrollbar):
     # a scrollbar that hides itself if it's not needed.  only
@@ -177,6 +177,10 @@ class Interface(Frame):
                     self.ts.login(user, pw)
                 except WSError, wse:
                     tkMessageBox.showerror("Authentication failed", "Something went wrong during authentication. Last.fm responded:\n\"%s\"" % wse.details)
+                except MalformedResponseError, mre:
+                    tkMessageBox.showerror("Malformed Response", "Something is wrong with last.fm:\n\"%s\"\nThis could indicate that the website is currently having problems." % mre)
+                except NetworkError, ne:
+                    tkMessageBox.showerror("Network Error", "A network error occurred:\n\"%s\"" % ne)
                 else:
                     result = self.ts.scrobble(self.lastfmdata)
                     tkMessageBox.showinfo("Scrobbled successfully", "Scrobbled the following to Last.fm: " + str(result))
