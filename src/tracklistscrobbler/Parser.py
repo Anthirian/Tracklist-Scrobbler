@@ -82,7 +82,7 @@ class Parser(object):
         Parse a record label if present in the title
         '''
         label = ""
-        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT:
+        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT or formatting == self.MM:
             pattern = re.compile("\(.*?\)" if formatting == self.TATW else "\[.*?\]", flags=re.I)
             match = pattern.search(title)
             if match:
