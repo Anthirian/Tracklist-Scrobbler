@@ -47,6 +47,7 @@ class Interface(Frame):
         self.master.iconbitmap("images/favicon.ico")
         self.bind_class("Text","<Control-a>", self.select_all)
         
+        self.createNotificationsArea()
         self.createLoginForm()
         self.createFormatOptions()
         self.createImage()
@@ -57,23 +58,33 @@ class Interface(Frame):
     def select_all(self, event):
         event.widget.tag_add("sel","1.0","end")
     
+    def notify(self, notification_text, notification_color="black"):
+        self.notification.configure(text=notification_text, foreground=notification_color)
+    
+    def clear_notifications(self):
+        self.notification.configure(text="", foreground="black")
+    
+    def createNotificationsArea(self):
+        self.notification = Label(self, text="", foreground="red", font="Cambria", wraplength=750)
+        self.notification.grid(row=0, column=0, columnspan=2, pady=10, padx=10, sticky=N+W)
+    
     def createLoginForm(self):
         '''
         Create a login form in the top right corner of the application window
         '''
         self.loginDetails = Frame(self)
         
-        usernameLabel = Label(self.loginDetails, text="Username:")
+        usernameLabel = Label(self.loginDetails, text="Username:", anchor=N)
         self.usernameField = Entry(self.loginDetails)
         usernameLabel.grid(row=0, column=0, padx=5)
         self.usernameField.grid(row=0, column=1)
         
-        passwordLabel = Label(self.loginDetails, text="Password:")
+        passwordLabel = Label(self.loginDetails, text="Password:", anchor=N)
         self.passwordField = Entry(self.loginDetails, show="*")
         passwordLabel.grid(row=0, column=3, padx=5)
         self.passwordField.grid(row=0, column=4)
         
-        self.loginDetails.grid(row=0, column=1, columnspan=2, pady=10, padx=8, sticky=E)
+        self.loginDetails.grid(row=0, column=1, columnspan=2, pady=10, padx=8, sticky=N+E)
     
     def createImage(self):
         self.logo = PhotoImage(file="images/audioscrobbler_small.gif")
@@ -119,7 +130,7 @@ class Interface(Frame):
         self.parseButton.grid(row=7, column=1, sticky=S, padx=7, pady=7)
         self.quitButton.grid(row=7, column=2, sticky=S, padx=7, pady=7)        
     
-    def getUser(self):
+    def getUsername(self):
         '''
         Get the username from the corresponding field
         '''
@@ -138,12 +149,11 @@ class Interface(Frame):
         return filter(None, self.textarea.get(1.0, END).split("\n"))
     
     def parse(self):
+        self.clear_notifications()
         trackFormat = self.podcast.get()
         invoer = self.textarea.get(1.0, END)
         if not trackFormat:
-            tkMessageBox.showerror("Format not specified", "You forgot to select a podcast type to parse. " + 
-                                   "Without this, the parser cannot parse the tracks properly. " + 
-                                   "Please select a podcast type and try again.")
+            self.notify("Please select a podcast type and try again.", "red")
             return
         
         # Split on end-of-lines and filter all blank lines
@@ -151,9 +161,10 @@ class Interface(Frame):
         contents = filter(None, invoer)
         
         if not contents:
-            tkMessageBox.showerror("No data", "You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.")
+            self.notify("You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.", "red")
         else:
-            self.hours_ago = tkSimpleDialog.askinteger("Listen time", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now'", initialvalue="0")
+            self.clear_notifications()
+            self.hours_ago = tkSimpleDialog.askinteger("Please specify a time offset", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now.'", initialvalue="0")
             self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.hours_ago)
         
             if results:
@@ -162,18 +173,17 @@ class Interface(Frame):
                     self.textarea.insert(INSERT, track + "\n")
                 self.parsed = True
                 self.scrobbleButton.configure(state=NORMAL)
-                self.parseButton.configure(text="Parse my modifications")
-                tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please correct any wrong tracks. " + 
-                                                           "When you feel it is correct, you may press 'Scrobble' to scrobble the tracks to Last.fm")
+                self.notify("Parsing complete. Please correct any wrong tracks below and press Scrobble.")
             else:
-                tkMessageBox.showerror("No results", "The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist if you can.")
+                self.notify("The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist and try again.", "red")
     
     def scrobble(self):
         '''
         Scrobble the tracklist to Last.fm
         '''
+        self.clear_notifications()
         if self.parsed:
-            user = self.getUser()
+            user = self.getUsername()
             pw = self.getPassword()
             self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.podcast, self.hours_ago)
             if user and pw:
@@ -186,12 +196,12 @@ class Interface(Frame):
                 except NetworkError, ne:
                     tkMessageBox.showerror("Network Error", "A network error occurred:\n\"%s\"" % ne)
                 else:
-                    result = self.ts.scrobble(self.lastfmdata)
-                    tkMessageBox.showinfo("Scrobbled successfully", "Scrobbled the following to Last.fm: " + str(result))
+                    self.ts.scrobble(self.lastfmdata)
+                    self.notify("Scrobbled successfully!", "black")
             else:
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
-            tkMessageBox.showerror("Not parsed yet", "This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.")
+            self.notify("This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.", "red")
 
 if __name__ == "__main__":
     s = Scrobbler()

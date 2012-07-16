@@ -12,5 +12,4 @@ It currently is able to parse the following podcasts' tracklists:
 
 Future ideas:
 - Retrieve a podcast's tracklist from the internet automatically before parsing
-- Do not display so many dialog boxes, but use the top left part of the window for important messages
 - Implement a (useful) statusbar
