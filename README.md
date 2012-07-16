@@ -7,6 +7,10 @@ It currently is able to parse the following podcasts' tracklists:
 - Corsten's Countdown
 - Moor Music
 - 3Voor12 Draait
+- The Arnej Podcast
+- Tiësto's Club Life Podcast
 
 Future ideas:
 - Retrieve a podcast's tracklist from the internet automatically before parsing
+- Do not display so many dialog boxes, but use the top left part of the window for important messages
+- Implement a (useful) statusbar
