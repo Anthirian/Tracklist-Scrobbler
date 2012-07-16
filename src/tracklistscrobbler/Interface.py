@@ -4,6 +4,9 @@ Created on Jun 28, 2012
 
 @author: Geert
 '''
+from Scrobbler import Scrobbler
+from Parser import Parser
+
 from Tkinter import *
 from ttk import *
 import tkMessageBox
@@ -37,6 +40,7 @@ class Interface(Frame):
         '''
         self.p = parser
         self.ts = scrobbler
+        self.parsed = False
         
         Frame.__init__(self, master)
         self.grid(sticky=N+S+E+W)
@@ -50,8 +54,6 @@ class Interface(Frame):
         self.createButtonsToolbar()
         self.addResizingWeights()
         
-        self.parsed = False
-    
     def select_all(self, event):
         event.widget.tag_add("sel","1.0","end")
     
@@ -108,14 +110,14 @@ class Interface(Frame):
         self.textarea.config(yscrollcommand=sb.set)
 
 
-    def createButtonsToolbar(self):
-        self.scrobbleButton = Button(self, text="Scrobble", command=self.scrobble, width=30)
+    def createButtonsToolbar(self):            
+        self.scrobbleButton = Button(self, text="Scrobble", command=self.scrobble, width=30, state=NORMAL if self.parsed else DISABLED)
         self.parseButton = Button(self, text="Parse", command=self.parse, width=30)
         self.quitButton = Button(self, text="Quit", command=self.quit)
         
-        self.scrobbleButton.grid(row=7, column=0, sticky=S, padx=5, pady=5)
-        self.parseButton.grid(row=7, column=1, sticky=S, padx=5, pady=5)
-        self.quitButton.grid(row=7, column=2, sticky=S, padx=5, pady=5)        
+        self.scrobbleButton.grid(row=7, column=0, sticky=S, padx=7, pady=7)
+        self.parseButton.grid(row=7, column=1, sticky=S, padx=7, pady=7)
+        self.quitButton.grid(row=7, column=2, sticky=S, padx=7, pady=7)        
     
     def getUser(self):
         '''
@@ -159,6 +161,8 @@ class Interface(Frame):
                 for track in results:
                     self.textarea.insert(INSERT, track + "\n")
                 self.parsed = True
+                self.scrobbleButton.configure(state=NORMAL)
+                self.parseButton.configure(text="Parse my modifications")
                 tkMessageBox.showinfo("Please check the parsed tracks", "The tracks that were parsed have been written to the text field. Please correct any wrong tracks. " + 
                                                            "When you feel it is correct, you may press 'Scrobble' to scrobble the tracks to Last.fm")
             else:
@@ -188,3 +192,10 @@ class Interface(Frame):
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
             tkMessageBox.showerror("Not parsed yet", "This tracklist has to be parsed before it can be scrobbled. Please press 'Parse' and then try scrobbling again.")
+
+if __name__ == "__main__":
+    s = Scrobbler()
+    p = Parser()
+    gui = Interface(p, s)
+    gui.master.title("Podcast Scrobbler")
+    gui.mainloop()
