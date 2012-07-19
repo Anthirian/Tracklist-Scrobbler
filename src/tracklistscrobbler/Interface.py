@@ -198,6 +198,8 @@ class Interface(Frame):
                 else:
                     self.ts.scrobble(self.lastfmdata)
                     self.notify("Scrobbled successfully!", "black")
+                    self.scrobbleButton.configure(state=DISABLED)
+                    self.parsed = False
             else:
                 tkMessageBox.showerror("Authentication error", "One of the login fields is empty. Please fix it before continuing.")
         else:
