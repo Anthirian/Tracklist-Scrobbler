@@ -17,7 +17,7 @@ from pylast import WSError, NetworkError, MalformedResponseError
 class AutoScrollbar(Scrollbar):
     # a scrollbar that hides itself if it's not needed.  only
     # works if you use the grid geometry manager.
-    def set(self, lo, hi):
+    def set(self, lo, hi): #@ReservedAssignment
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             # grid_remove is currently missing from Tkinter!
             self.tk.call("grid", "remove", self)
@@ -49,7 +49,7 @@ class Interface(Frame):
         
         self.createNotificationsArea()
         self.createLoginForm()
-        self.createFormatOptions()
+        self.createPodcastList()
         self.createImage()
         self.createTextArea()
         self.createButtonsToolbar()
@@ -91,13 +91,13 @@ class Interface(Frame):
         picture = Label(self, image=self.logo)
         picture.grid(row=2, column=0, pady=15, sticky=S)
     
-    def createFormatOptions(self):
+    def createPodcastList(self):
         self.options = Frame(self)
         self.podcast = StringVar()
         
         Label(self.options, text="Please select the correct podcast below:", font="Cambria").grid(pady=5)
         
-        supportedPodcasts = self.p.get_supported_podcasts()
+        supportedPodcasts = sorted(self.p.get_supported_podcasts())
         for name in supportedPodcasts:
             Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W, padx=5)
         self.options.grid(row=1, column=0, padx=20, sticky=N)
