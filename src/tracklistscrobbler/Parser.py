@@ -18,19 +18,20 @@ class Parser(object):
         self.UNKNOWN = "ID"
         self.USRMOD = "User Modified"
         
-        self.ASOT = "A State of Trance"
-        self.TATW = "Trance Around The World"
-        self.GDJB = "Global DJ Broadcast"
-        self.TGEP = "The Gareth Emery Podcast"
-        self.CC = "Corsten's Countdown"
-        self.MM = "Moor Music"
-        self.TCLP = "Tiësto's Club Life Podcast"
-        self.DVTD = "3 Voor 12 Draait"
-        self.TAP = "The Arnej Podcast"
+        self.ASOT = "Armin van Buuren - A State of Trance"
+        self.TATW = "Above & Beyond - Trance Around The World"
+        self.GDJB = "Markus Schulz - Global DJ Broadcast"
+        self.TGEP = "Gareth Emery - The Gareth Emery Podcast"
+        self.CC = "Ferry Corsten - Corsten's Countdown"
+        self.MM = "Andy Moor - Moor Music"
+        self.TCLP = "Tiësto - Club Life Podcast"
+        self.DVTD = "3voor12 Draait"
+        self.TAP = "Arnej - The Arnej Podcast"
+        self.JOCS = "John O'Callaghan - Subculture"
         
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD, self.TCLP]
+        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD, self.TCLP, self.JOCS]
     
     def get_supported_podcasts(self):
         '''
