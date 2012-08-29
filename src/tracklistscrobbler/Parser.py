@@ -109,7 +109,7 @@ class Parser(object):
         Parse an album mention from the title
         '''
         # TODO: better regex naming
-        pattern = re.compile("""\(.*[from].*[album].*['"].*['"].*\)""", flags=re.I)
+        pattern = re.compile("""[\(\[].*[from].*[album].*['"].*['"].*[\)\]]""", flags=re.I)
         match = pattern.search(title)
         album = ""
         if match:
