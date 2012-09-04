@@ -100,6 +100,11 @@ class Interface(Frame):
         supportedPodcasts = sorted(self.p.get_supported_podcasts())
         for name in supportedPodcasts:
             Radiobutton(self.options, text=name, value=name, variable=self.podcast).grid(sticky=N+W, padx=5)
+        
+        
+        self.just_listened = BooleanVar()
+        Checkbutton(self.options, text="I just finished listening to this podcast", variable=self.just_listened, onvalue=True, offvalue=False).grid(sticky=N+W, padx=5, pady=25)        
+        
         self.options.grid(row=1, column=0, padx=20, sticky=N)
 
     def addResizingWeights(self):
@@ -164,7 +169,10 @@ class Interface(Frame):
             self.notify("You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.", "red")
         else:
             self.clear_notifications()
-            self.hours_ago = tkSimpleDialog.askinteger("Please specify a time offset", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now.'", initialvalue="0")
+            if self.just_listened.get() == False:
+                self.hours_ago = tkSimpleDialog.askinteger("Please specify a time offset", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now.'", initialvalue="0")
+            else:
+                self.hours_ago = 0
             self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.hours_ago)
         
             if results:

@@ -141,8 +141,8 @@ class Parser(object):
         Remove any illegal (unicode) characters and replace them with their ASCII counterparts
         '''
         # TODO: Add more illegal characters and make it into a dict
-        illegalCharacters = ["’", "‘", "–"]
-        replacementCharacters = ["'", "'", "-"]
+        illegalCharacters = ["’", "‘", "’", "–"]
+        replacementCharacters = ["'", "'", "'", "-"]
         for x in range(len(illegalCharacters)):
             if len(illegalCharacters) == len(replacementCharacters):
                 line = line.replace(illegalCharacters[x], replacementCharacters[x])
@@ -242,8 +242,8 @@ class Parser(object):
             
             # 3 Voor 12 Draait doesn't add album, remix and label information to their tracklist, so don't try to parse it
             if not podcast == self.DVTD:
-                title, album = self.find_album(title)
                 title, label = self.find_label(podcast, title)
+                title, album = self.find_album(title)
                 title, remix = self.find_remix(podcast, title)
                 title = title.strip('"')
             
