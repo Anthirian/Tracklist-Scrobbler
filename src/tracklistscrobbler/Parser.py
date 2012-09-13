@@ -23,15 +23,16 @@ class Parser(object):
         self.GDJB = "Markus Schulz - Global DJ Broadcast"
         self.TGEP = "Gareth Emery - The Gareth Emery Podcast"
         self.CC = "Ferry Corsten - Corsten's Countdown"
-        self.MM = "Andy Moor - Moor Music"
+        self.AMMM = "Andy Moor - Moor Music"
         self.TCLP = "Tiësto - Club Life Podcast"
         self.DVTD = "3voor12 Draait"
         self.TAP = "Arnej - The Arnej Podcast"
         self.JOCS = "John O'Callaghan - Subculture"
+        self.MWMM = "Marcel Woods - Musical Madness"
         
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.MM, self.DVTD, self.TCLP, self.JOCS]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM]
     
     def get_supported_podcasts(self):
         '''
@@ -83,7 +84,7 @@ class Parser(object):
         Parse a record label if present in the title
         '''
         label = ""
-        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT or formatting == self.MM:
+        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT or formatting == self.AMMM:
             pattern = re.compile("\(.*?\)" if formatting == self.TATW else "\[.*?\]", flags=re.I)
             match = pattern.search(title)
             if match:
@@ -264,7 +265,7 @@ class Parser(object):
     
         # Prevent adding ID's of any kind by zeroing out any track that contains an ID
         for text in trackToScrobble.values():
-            if text == self.UNKNOWN:
+            if text == self.UNKNOWN or text.find('?') != -1:
                 return {}
         
         return trackToScrobble
