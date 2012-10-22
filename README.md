@@ -1,4 +1,4 @@
-### Tracklist Scrobbler is an application that allows you to scrobble a podcast's tracklist to last.fm.
+### Tracklist Scrobbler is an application that allows you to scrobble a podcast's tracklist to [Last.fm](http://www.last.fm).
 
 **Please bear in mind that this is in no way finished or stable. I am only working on this in my spare time, which is very limited in the coming months.**
 
@@ -14,11 +14,11 @@
 * Arnej - The Arnej Podcast
 * John O'Callaghan - Subculture
 
-# Current bugs:
+# Current bugs
 - When an artist contains a dash (-) the parser assumes everything after the first dash is the title, when instead it is still part of the artist
 - album parsing is very limited right now
 
-# Future ideas:
+# Future ideas
 - Retrieve a podcast's tracklist from the internet automatically before parsing
 - Implement a better statusbar
 - Remove more info about special tracks (World Premiere, Global Selection Winner, Future Favorite, Web Vote Winner, etc.)
