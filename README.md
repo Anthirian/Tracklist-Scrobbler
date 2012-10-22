@@ -2,7 +2,7 @@
 
 **Please bear in mind that this is in no way finished or stable. I am only working on this in my spare time, which is very limited in the coming months.**
 
-It currently is able to parse the following podcasts' tracklists:
+# Supported Podcasts
 * Armin van Buuren - A State of Trance
 * Above & Beyond - Trance Around The World
 * Markus Schulz - Global DJ Broadcast
