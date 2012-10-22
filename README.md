@@ -1,4 +1,4 @@
-![Tracklist Scrobbler Logo](/src/tracklistscrobbler/images/podcast.png) Tracklist Scrobbler is an application that allows you to scrobble a podcast's tracklist to last.fm.
+## Tracklist Scrobbler is an application that allows you to scrobble a podcast's tracklist to last.fm.
 
 **Please bear in mind that this is in no way finished or stable. I am only working on this in my spare time, which is very limited in the coming months.**
 
