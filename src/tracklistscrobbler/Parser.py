@@ -29,10 +29,11 @@ class Parser(object):
         self.TAP = "Arnej - The Arnej Podcast"
         self.JOCS = "John O'Callaghan - Subculture"
         self.MWMM = "Marcel Woods - Musical Madness"
+        self.MCES = "M.I.K.E. - Club Elite Sessions"
         
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.MCES]
     
     def get_supported_podcasts(self):
         '''
@@ -142,8 +143,8 @@ class Parser(object):
         Remove any illegal (unicode) characters and replace them with their ASCII counterparts
         '''
         # TODO: Add more illegal characters and make it into a dict
-        illegalCharacters = ["’", "‘", "’", "–"]
-        replacementCharacters = ["'", "'", "'", "-"]
+        illegalCharacters = ["`", "’", "‘", "’", "–"]
+        replacementCharacters = ["'", "'", "'", "'", "-"]
         for x in range(len(illegalCharacters)):
             if len(illegalCharacters) == len(replacementCharacters):
                 line = line.replace(illegalCharacters[x], replacementCharacters[x])
