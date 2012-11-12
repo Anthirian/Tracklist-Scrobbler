@@ -30,10 +30,11 @@ class Parser(object):
         self.JOCS = "John O'Callaghan - Subculture"
         self.MWMM = "Marcel Woods - Musical Madness"
         self.MCES = "M.I.K.E. - Club Elite Sessions"
+        self.FSOE = "Aly & Fila - Future Sound of Egypt"
         
         self.longShows = [self.ASOT, self.TATW, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.MCES]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.MCES, self.FSOE]
     
     def get_supported_podcasts(self):
         '''
