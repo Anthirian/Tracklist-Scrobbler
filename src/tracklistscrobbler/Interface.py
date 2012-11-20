@@ -159,14 +159,14 @@ class Interface(Frame):
     def parse(self):
         self.clear_notifications()
         trackFormat = self.podcast.get()
-        invoer = self.textarea.get(1.0, END)
+        contents = self.textarea.get(1.0, END)
         if not trackFormat:
             self.notify("Please select a podcast type and try again.", "red")
             return
         
         # Split on end-of-lines and filter all blank lines
-        invoer = invoer.split("\n")
-        contents = filter(None, invoer)
+        contents = contents.split("\n")
+        contents = filter(None, contents)
         
         if not contents:
             self.notify("You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.", "red")

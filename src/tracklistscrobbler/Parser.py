@@ -19,7 +19,7 @@ class Parser(object):
         self.USRMOD = "User Modified"
         
         self.ASOT = "Armin van Buuren - A State of Trance"
-        self.TATW = "Above & Beyond - Trance Around The World"
+        self.ABGT = "Above & Beyond - Group Therapy"
         self.GDJB = "Markus Schulz - Global DJ Broadcast"
         self.TGEP = "Gareth Emery - The Gareth Emery Podcast"
         self.CC = "Ferry Corsten - Corsten's Countdown"
@@ -29,12 +29,13 @@ class Parser(object):
         self.TAP = "Arnej - The Arnej Podcast"
         self.JOCS = "John O'Callaghan - Subculture"
         self.MWMM = "Marcel Woods - Musical Madness"
-        self.MCES = "M.I.K.E. - Club Elite Sessions"
+        self.CES = "M.I.K.E. - Club Elite Sessions"
         self.FSOE = "Aly & Fila - Future Sound of Egypt"
+        self.GC = "Greg Downey - Global Code"
         
-        self.longShows = [self.ASOT, self.TATW, self.GDJB]
+        self.longShows = [self.ASOT, self.ABGT, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.MCES, self.FSOE]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC]
     
     def get_supported_podcasts(self):
         '''
@@ -86,8 +87,8 @@ class Parser(object):
         Parse a record label if present in the title
         '''
         label = ""
-        if formatting == self.TATW or formatting == self.TGEP or formatting == self.ASOT or formatting == self.AMMM:
-            pattern = re.compile("\(.*?\)" if formatting == self.TATW else "\[.*?\]", flags=re.I)
+        if formatting in [self.ABGT, self.TGEP, self.ASOT, self.AMMM]:
+            pattern = re.compile("\(.*?\)" if formatting == self.ABGT else "\[.*?\]", flags=re.I)
             match = pattern.search(title)
             if match:
                 label = title[match.start() + 1:match.end() - 1]
@@ -99,7 +100,7 @@ class Parser(object):
         Parse a remix if present in the title
         '''
         # To parse a remix or mashup we take everything between the brackets, either round or square
-        pattern = re.compile("\[.*?\]" if formatting == self.TATW else "\(.*?\)", flags=re.I)
+        pattern = re.compile("\[.*?\]" if formatting == self.ABGT else "\(.*?\)", flags=re.I)
         match = pattern.search(title)
         remix = ""
         if match:
