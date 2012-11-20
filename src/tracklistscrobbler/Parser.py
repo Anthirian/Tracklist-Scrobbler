@@ -32,10 +32,11 @@ class Parser(object):
         self.CES = "M.I.K.E. - Club Elite Sessions"
         self.FSOE = "Aly & Fila - Future Sound of Egypt"
         self.GC = "Greg Downey - Global Code"
+        self.PPP = "Paul Oakenfold - Planet Perfecto"
         
         self.longShows = [self.ASOT, self.ABGT, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PPP]
     
     def get_supported_podcasts(self):
         '''
