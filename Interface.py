@@ -46,7 +46,7 @@ class Interface(Frame):
         self.grid(sticky = N + S + E + W)
         self.master.iconbitmap("images/favicon.ico")
         self.bind_class("Text", "<Control-a>", self.select_all)
-        self.bind_all("<Control-w>", quit)
+        self.bind_all("<Control-w>", self.quit)
         
         #self.bind_all("Frame","<Control-w>". self.quit)
         
