@@ -17,6 +17,7 @@ dist/*
 *.tmproj
 *.tmproject
 *.sw?
+.idea/*
 
 # OS generated files #
 ######################
