@@ -1,9 +1,9 @@
 #encoding: utf-8
-'''
+"""
 Created on Jun 28, 2012
 
 @author: Geert
-'''
+"""
 from Scrobbler import Scrobbler
 from Parser import Parser
 
@@ -15,8 +15,10 @@ import tkSimpleDialog
 from pylast import WSError, NetworkError, MalformedResponseError
 
 class AutoScrollbar(Scrollbar):
-    # A scrollbar that hides itself if it's not needed. Only works if you use the grid geometry manager.
-    def set(self, lo, hi): #@ReservedAssignment
+    """
+    A scrollbar that hides itself if it's not needed. Only works if you use the grid geometry manager.
+    """
+    def set(self, lo, hi):
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             # grid_remove is currently missing from Tkinter!
             self.tk.call("grid", "remove", self)
@@ -30,13 +32,13 @@ class AutoScrollbar(Scrollbar):
 
 
 class Interface(Frame):
-    '''
+    """
     classdocs
-    '''
+    """
     def __init__(self, parser, scrobbler, master = None):
-        '''
+        """
         Constructor
-        '''
+        """
         self.p = parser
         self.ts = scrobbler
         self.parsed = False
@@ -72,9 +74,9 @@ class Interface(Frame):
         self.notification.grid(row = 0, column = 0, columnspan = 2, pady = 10, padx = 10, sticky = N + W)
     
     def createLoginForm(self):
-        '''
+        """
         Create a login form in the top right corner of the application window
-        '''
+        """
         self.loginDetails = Frame(self)
         
         usernameLabel = Label(self.loginDetails, text = "Username:", anchor = N)
@@ -139,21 +141,21 @@ class Interface(Frame):
         self.quitButton.grid(row = 7, column = 2, sticky = S, padx = 7, pady = 7)        
     
     def getUsername(self):
-        '''
+        """
         Get the username from the corresponding field
-        '''
+        """
         return self.usernameField.get()
     
     def getPassword(self):
-        '''
+        """
         Get the password from the corresponding field
-        '''
+        """
         return self.passwordField.get()        
     
     def getTextAreaContents(self):
-        '''
+        """
         Get the contents of the textarea as a list, after filtering for blank lines
-        '''
+        """
         return filter(None, self.textarea.get(1.0, END).split("\n"))
     
     def parse(self):
@@ -189,9 +191,9 @@ class Interface(Frame):
                 self.notify("The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist and try again.", "red")
     
     def scrobble(self):
-        '''
+        """
         Scrobble the tracklist to Last.fm
-        '''
+        """
         self.clear_notifications()
         if self.parsed:
             user = self.getUsername()

@@ -1,20 +1,20 @@
 #encoding: utf-8
-'''
+"""
 Created on Jul 1, 2012
 
 @author: Geert
-'''
+"""
 import time
 import re
 
 class Parser(object):
-    '''
+    """
     classdocs
-    '''
+    """
     def __init__(self):
-        '''
+        """
         Constructor
-        '''        
+        """
         self.UNKNOWN = "ID"
         self.USRMOD = "User Modified"
         
@@ -39,27 +39,27 @@ class Parser(object):
         self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PPP]
     
     def get_supported_podcasts(self):
-        '''
+        """
         Get a list of podcasts that are supported by the parser.
-        '''
+        """
         return self.longShows + self.mediumShows + self.shortShows
     
     def strip_leading_digits(self, head):
-        '''
+        """
         Regex for any combination of multiple digits followed by either a . or a ) and a whitespace
-        '''
+        """
         pattern = re.compile(r"\A\d+[.)] *")
         match = pattern.match(head)
         artist = head[match.end() if match else 0:].strip()
         return artist
 
     def find_featured_artists(self, artist):
-        '''
+        """
         Find featuredArtist artists in the artists.
         The featured artist is prefixed by any of the following:
         "feat. ", "feat ", "Feat. ", "Feat ", "ft. ", "ft ", "Ft ", "Ft. "
-        '''
-        pattern = re.compile(" ?f[ea]*t.?[uring]* ", flags=re.I)
+        """
+        pattern = re.compile(" ?f[ea]*t.?[uring]* ", flags=re.I) # TODO this currently matches "fat" as well
         match = pattern.search(artist)
         # If the artist contains a featuredArtist artist we check which term matched our regex, add that term as featuredArtist artist and remove it from the artist itself
         featuredArtist = ""
@@ -72,9 +72,9 @@ class Parser(object):
         return artist, featuredArtist
 
     def find_presented_artist(self, artist):
-        '''
+        """
         If the artists would like to present an alias, parse it
-        '''
+        """
         pattern = re.compile(" ?pres.?[ents]* ", flags=re.I)
         match = pattern.search(artist)
         presentedArtist = ""
@@ -84,9 +84,9 @@ class Parser(object):
         return artist, presentedArtist
 
     def find_label(self, formatting, title):
-        '''
+        """
         Parse a record label if present in the title
-        '''
+        """
         label = ""
         if formatting in [self.ABGT, self.TGEP, self.ASOT, self.AMMM]:
             pattern = re.compile("\(.*?\)" if formatting == self.ABGT else "\[.*?\]", flags=re.I)
@@ -97,9 +97,9 @@ class Parser(object):
         return title, label
 
     def find_remix(self, formatting, title):
-        '''
+        """
         Parse a remix if present in the title
-        '''
+        """
         # To parse a remix or mashup we take everything between the brackets, either round or square
         pattern = re.compile("\[.*?\]" if formatting == self.ABGT else "\(.*?\)", flags=re.I)
         match = pattern.search(title)
@@ -110,9 +110,9 @@ class Parser(object):
         return title, remix
     
     def find_album(self, title):
-        '''
+        """
         Parse an album mention from the title
-        '''
+        """
         # TODO: better regex naming
         pattern = re.compile("""[\(\[].*[from].*[album].*['"].*['"].*[\)\]]""", flags=re.I)
         match = pattern.search(title)
@@ -127,9 +127,10 @@ class Parser(object):
         return title, album
     
     def find_mashup(self, title):
-        '''
+        """
         Find an incorrectly formatted mashup and split the title into multiple tracks
-        '''
+        """
+        # TODO not finished yet
         pattern = re.compile("w/")
         match = pattern.search(title)
         title1, track = title, ""
@@ -142,9 +143,9 @@ class Parser(object):
         return title1, track
         
     def replace_illegal_characters(self, line):
-        '''
+        """
         Remove any illegal (unicode) characters and replace them with their ASCII counterparts
-        '''
+        """
         # TODO: Add more illegal characters and make it into a dict
         illegalCharacters = ["`", "’", "‘", "’", "–"]
         replacementCharacters = ["'", "'", "'", "'", "-"]
@@ -157,12 +158,14 @@ class Parser(object):
         return line
     
     def remove_special_track_info(self, line):
-        '''
+        """
         Remove special types indications of a track. These are indicated by a text, followed b
         Examples of this are
         - FUTURE FAVORITE:
-        - ASOT RADIO CLASSIC:  
-        '''
+        - ASOT RADIO CLASSIC:
+        - [Global Selection]
+        - [World Premiere]
+        """
         _, _, track = line.partition(":")
         return track.strip() if track else line
     
