@@ -147,7 +147,7 @@ class Parser(object):
         Remove any illegal (unicode) characters and replace them with their ASCII counterparts
         """
         # TODO: Add more illegal characters and make it into a dict
-        illegalCharacters = ["`", "’", "‘", "’", "–"]
+        illegalCharacters = [u"`", u"’", u"‘", u"’", u"–"]
         replacementCharacters = ["'", "'", "'", "'", "-"]
         for x in range(len(illegalCharacters)):
             if len(illegalCharacters) == len(replacementCharacters):
@@ -225,7 +225,7 @@ class Parser(object):
             return trackToScrobble
         
         if not podcast == self.USRMOD:
-            separators = ['"', '–', '-']
+            separators = ['"', u'–', '-']
             
             # Split the line into the artist (head) and into the title, album and label (tail)
             for sep in separators:
