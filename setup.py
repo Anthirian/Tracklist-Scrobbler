@@ -12,7 +12,7 @@ except ImportError, message:
 sys.argv.append('py2exe')
 
 includes = ['pylast']
-options = {'py2exe': {'bundle_files': 3, 'includes': includes}}
+options = {'py2exe': {'bundle_files': 3, 'includes': includes, 'optimize': 2}}
 
 def recursive_find_data_files(root_dir, allowed_extensions=tuple('*')):
 
