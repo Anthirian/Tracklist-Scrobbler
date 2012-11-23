@@ -173,11 +173,11 @@ class Interface(Frame):
             self.notify("You have not entered a tracklist. Please provide a tracklist before pressing the Scrobble button.", "red")
         else:
             self.clear_notifications()
-            if self.just_listened.get() == False:
-                self.hours_ago = tkSimpleDialog.askinteger("Please specify a time offset", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now.'", initialvalue = "0")
+            if not self.just_listened.get():
+                self.time_offset = tkSimpleDialog.askinteger("Please specify a time offset", "How long ago did you listen to this podcast (in hours)? Enter 0 for 'just now.'", initialvalue = "0")
             else:
-                self.hours_ago = 0
-            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.hours_ago)
+                self.time_offset = 0
+            self.lastfmdata, results = self.p.parse_tracklist(contents, self.podcast.get(), self.time_offset)
         
             if results:
                 self.textarea.delete(1.0, END)
@@ -197,7 +197,7 @@ class Interface(Frame):
         if self.parsed:
             user = self.getUsername()
             pw = self.getPassword()
-            self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.podcast, self.hours_ago)
+            self.lastfmdata = self.p.parse_user_modifications(self.getTextAreaContents(), self.podcast, self.time_offset)
             if user and pw:
                 try:
                     self.ts.login(user, pw)
