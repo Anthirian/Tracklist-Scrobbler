@@ -221,5 +221,5 @@ if __name__ == "__main__":
     s = Scrobbler()
     p = Parser()
     gui = Interface(p, s)
-    gui.master.title("Podcast Scrobbler")
+    gui.master.title("Tracklist Scrobbler")
     gui.mainloop()
