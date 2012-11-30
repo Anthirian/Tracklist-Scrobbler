@@ -229,7 +229,7 @@ class Parser(object):
             return trackToScrobble
         
         if not podcast == self.USRMOD:
-            separators = ['"', u'–', '-']
+            separators = ['"', u' – ', ' - ']
             
             # Split the line into the artist (head) and into the title, album and label (tail)
             for sep in separators:
