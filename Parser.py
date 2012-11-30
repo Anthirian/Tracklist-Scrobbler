@@ -109,7 +109,7 @@ class Parser(object):
             remix = title[match.start() + 1:match.end() - 1]
             title = title[:match.start()].strip()
         # "Original mixes" are no remixes
-        if re.search("original", remix, flags=re.I):
+        if re.search("original", remix, flags=re.I) or re.search("album", remix, flags=re.I):
             remix = ""
         return title, remix
     
