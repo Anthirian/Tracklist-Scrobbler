@@ -36,7 +36,7 @@ class Interface(Frame):
     """
     def __init__(self, parser, scrobbler, master = None):
         """
-        Constructor
+        Initiate the scrobbler and parser and build the GUI
         """
         self.p = parser
         self.ts = scrobbler
@@ -46,11 +46,8 @@ class Interface(Frame):
         self.grid(sticky = N + S + E + W)
         self.master.iconbitmap("images/favicon.ico")
         self.bind_class("Text", "<Control-a>", self.select_all)
-        self.bind_all("<Control-w>", self.quit)
-        
-        #self.bind_all("Frame","<Control-w>". self.quit)
-        
-        
+        self.bind_all("<Control-w>", self.quitApplication)
+
         self.createNotificationsArea()
         self.createLoginForm()
         self.createPodcastList()
@@ -58,14 +55,29 @@ class Interface(Frame):
         self.createTextArea()
         self.createButtonsToolbar()
         self.addResizingWeights()
-        
+
+    def quitApplication(self, event):
+        """
+        Quit the application when the provided event occurs
+        """
+        self.quit()
+
     def select_all(self, event):
+        """
+        Select all text inside the widget that is the source of the provided event
+        """
         event.widget.tag_add("sel", "1.0", "end")
     
     def notify(self, notification_text, notification_color = "black"):
+        """
+        Print a notification in the status bar in the top left corner of the window
+        """
         self.notification.configure(text = notification_text, foreground = notification_color)
     
     def clear_notifications(self):
+        """
+        Clear all notification text
+        """
         self.notification.configure(text = "", foreground = "black")
     
     def createNotificationsArea(self):
@@ -85,6 +97,7 @@ class Interface(Frame):
         
         passwordLabel = Label(self.loginDetails, text = "Password:", anchor = N)
         self.passwordField = Entry(self.loginDetails, show = "*")
+        self.passwordField.bind("<Return>", self.scrobbleUsingReturn)
         passwordLabel.grid(row = 0, column = 3, padx = 5)
         self.passwordField.grid(row = 0, column = 4)
         
@@ -188,7 +201,14 @@ class Interface(Frame):
                 self.notify("Parsing complete. Please correct any wrong tracks below and press Scrobble.")
             else:
                 self.notify("The tracklist you provided could not be parsed into valid tracks. Please correct the tracklist and try again.", "red")
-    
+
+    def scrobbleUsingReturn(self, event):
+        """
+        Scrobble the tracklist to last.fm when pressing Return
+        (Currently only used in the password field)
+        """
+        self.scrobble()
+
     def scrobble(self):
         """
         Scrobble the tracklist to Last.fm
