@@ -32,11 +32,12 @@ class Parser(object):
         self.CES = "M.I.K.E. - Club Elite Sessions"
         self.FSOE = "Aly & Fila - Future Sound of Egypt"
         self.GC = "Greg Downey - Global Code"
-        self.PPP = "Paul Oakenfold - Planet Perfecto"
+        self.PP = "Paul Oakenfold - Planet Perfecto"
+        self.SI = "Solarstone - Solaris International"
         
         self.longShows = [self.ASOT, self.ABGT, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PPP]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PP, self.SI]
     
     def get_supported_podcasts(self):
         """
@@ -88,7 +89,7 @@ class Parser(object):
         Parse a record label if present in the title
         """
         label = ""
-        if formatting in [self.ABGT, self.TGEP, self.ASOT, self.AMMM]:
+        if formatting in [self.ABGT, self.TGEP, self.ASOT, self.AMMM, self.SI]:
             pattern = re.compile("\(.*?\)" if formatting == self.ABGT else "\[.*?\]", flags=re.I)
             match = pattern.search(title)
             if match:
@@ -107,6 +108,9 @@ class Parser(object):
         if match:
             remix = title[match.start() + 1:match.end() - 1]
             title = title[:match.start()].strip()
+        # "Original mixes" are no remixes
+        if re.search("original", remix, flags=re.I) or re.search("album", remix, flags=re.I):
+            remix = ""
         return title, remix
     
     def find_album(self, title):
@@ -208,10 +212,10 @@ class Parser(object):
         return tracklist
     
     def parse_line(self, line, podcast):
-        '''
+        """
         Parses a given line into a series of variables to be used in a format_tracks
         These variables include artist, title, record label and remix
-        '''
+        """
         album, remix, label = "", "", ""
         trackToScrobble = {}
         
@@ -225,7 +229,7 @@ class Parser(object):
             return trackToScrobble
         
         if not podcast == self.USRMOD:
-            separators = ['"', u'–', '-']
+            separators = ['"', u' – ', ' - ']
             
             # Split the line into the artist (head) and into the title, album and label (tail)
             for sep in separators:
