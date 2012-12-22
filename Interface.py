@@ -56,6 +56,10 @@ class Interface(Frame):
         self.create_buttons_toolbar()
         self.add_resizing_weights()
 
+    def focus_next_window(self, event):
+        event.widget.tk_focusNext().focus()
+        return("break")
+
     def quit_application(self, event):
         """
         Quit the application when the provided event occurs
@@ -135,6 +139,7 @@ class Interface(Frame):
     def create_tracklist_container(self):
         self.textarea = Text(self, height = 35, width = 100, padx = 5, pady = 5)
         self.textarea.insert("end", "Please paste your tracklist here\n\nOnly use one line per track!")
+        self.textarea.bind("<Tab>", self.focus_next_window)
         self.textarea.grid(row = 1, column = 1, rowspan = 2, columnspan = 2, sticky = N + S + E + W)
         
         sb = AutoScrollbar(self)
