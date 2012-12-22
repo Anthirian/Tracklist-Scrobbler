@@ -10,6 +10,7 @@ from Tkinter import *
 from ttk import *
 import tkMessageBox
 import tkSimpleDialog
+import re
 
 from pylast import WSError, NetworkError, MalformedResponseError
 
@@ -83,7 +84,14 @@ class Interface(Frame):
         Clear all notification text
         """
         self.notification.configure(text = "", foreground = "black")
-    
+
+    def clear_initial_container_contents(self, event):
+        """
+        Clear the initial container contents when first clicking inside the container
+        """
+        if re.search(self.textarea_initial_contents, self.get_raw_container_contents(), flags=re.I):
+            self.textarea.delete(1.0, END)
+
     def create_notifications_area(self):
         self.notification = Label(self, text = "", foreground = "red", font = "Cambria", wraplength = 750)
         self.notification.grid(row = 0, column = 0, columnspan = 2, pady = 10, padx = 10, sticky = N + W)
@@ -138,8 +146,11 @@ class Interface(Frame):
 
     def create_tracklist_container(self):
         self.textarea = Text(self, height = 35, width = 100, padx = 5, pady = 5)
-        self.textarea.insert("end", "Please paste your tracklist here\n\nOnly use one line per track!")
+        self.textarea_initial_contents = "Please paste your tracklist here\n\nOnly use one line per track!"
+        self.textarea.insert("end", self.textarea_initial_contents)
         self.textarea.bind("<Tab>", self.focus_next_window)
+        # TODO Clear contents upon taking focus instead of mouse click
+        self.textarea.bind("<Button-1>", self.clear_initial_container_contents)
         self.textarea.grid(row = 1, column = 1, rowspan = 2, columnspan = 2, sticky = N + S + E + W)
         
         sb = AutoScrollbar(self)
@@ -167,10 +178,16 @@ class Interface(Frame):
         Get the password from the corresponding field
         """
         return self.passwordField.get()        
-    
-    def get_container_contents(self):
+
+    def get_raw_container_contents(self):
         """
-        Get the contents of the textarea as a list, after filtering for blank lines
+        Get the contents of the tracklist container as a string, without filtering
+        """
+        return self.textarea.get(1.0, END)
+
+    def get_container_contents_filtered(self):
+        """
+        Get the contents of the tracklist container as a list, after filtering any blank lines
         """
         return filter(None, self.textarea.get(1.0, END).split("\n"))
     
@@ -180,7 +197,7 @@ class Interface(Frame):
         """
         self.clear_notifications()
         trackFormat = self.podcast.get()
-        contents = self.textarea.get(1.0, END)
+        contents = self.get_raw_container_contents()
         if not trackFormat:
             self.notify("Please select a podcast type and try again.", "red")
             return
@@ -224,7 +241,7 @@ class Interface(Frame):
         if self.parsed:
             user = self.get_user()
             pw = self.get_pass()
-            self.lastfmdata = self.p.parse_user_modifications(self.get_container_contents(), self.podcast, self.time_offset)
+            self.lastfmdata = self.p.parse_user_modifications(self.get_container_contents_filtered(), self.podcast, self.time_offset)
             if user and pw:
                 try:
                     self.ts.login(user, pw)
