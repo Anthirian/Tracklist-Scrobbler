@@ -38,8 +38,6 @@ class Scrobbler(object):
         """
         if self.authenticated:
             self.lastfm.scrobble_many(data)
-            #print "scrobbling this crap", data
         else:
-            # Throw a WSError instead of printing to the console.
-            print "You are not authenticated yet, please use the login function before scrobbling."
+            raise WSError("You are not authenticated yet, please use the login function before scrobbling.")
         return data
