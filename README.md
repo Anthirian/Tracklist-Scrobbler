@@ -22,6 +22,7 @@
 # Current bugs
 - When an artist contains a dash (-) the parser assumes everything after the first dash is the title, when instead it is still part of the artist
 - album parsing is very limited right now
+- Armin van Buuren - A State of Trance tracklisting doesn't use dashes but newlines. At the moment this yields issues.
 
 # Future ideas
 - Retrieve a podcast's tracklist from the internet automatically before parsing
