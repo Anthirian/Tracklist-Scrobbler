@@ -47,7 +47,7 @@ setup(
     windows = [
         {
             'script': 'Interface.py',
-            'icon_resources': [(0, "images\\tracklistscrobbler.ico")]
+            'icon_resources': [(0, "images\\favicon.ico")]
         }
     ],
     data_files = recursive_find_data_files('images', ['gif', 'png', 'jpg', 'ico']),
