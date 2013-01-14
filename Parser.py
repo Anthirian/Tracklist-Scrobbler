@@ -34,10 +34,11 @@ class Parser(object):
         self.GC = "Greg Downey - Global Code"
         self.PP = "Paul Oakenfold - Planet Perfecto"
         self.SI = "Solarstone - Solaris International"
+        self.ATWA = "Arty - Together We Are"
         
         self.longShows = [self.ASOT, self.ABGT, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PP, self.SI]
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PP, self.SI, self.ATWA]
     
     def get_supported_podcasts(self):
         """
