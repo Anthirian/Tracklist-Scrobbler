@@ -61,12 +61,13 @@ class Parser(object):
         The featured artist is prefixed by any of the following:
         "feat. ", "feat ", "Feat. ", "Feat ", "ft. ", "ft ", "Ft ", "Ft. "
         """
-        pattern = re.compile(" ?f[ea]*t.?[uring]* ", flags=re.I) # TODO this currently matches "fat" as well
+        pattern = re.compile(" f[ea]*t.?[uring]* ", flags=re.I) # TODO this currently matches "fat" as well
         match = pattern.search(artist)
         # If the artist contains a featuredArtist artist we check which term matched our regex, add that term as featuredArtist artist and remove it from the artist itself
         featuredArtist = ""
         if match:
             featuredArtist = artist[match.start():].strip() # only keep things in front of the 'feat.'
+            pattern = re.compile("f[ea]*t.?[uring]* ", flags=re.I)
             featText = pattern.match(featuredArtist)
             if featText:
                 featuredArtist = featuredArtist[featText.end():].strip() # take everything after 'feat.'
@@ -286,6 +287,7 @@ class Parser(object):
     def parse_tracklist(self, tracks, podcast, hours_ago):
         listOfTracks = tracks 
         tracklist = []
+        # TODO: Preprocess "A State of Trance" and "Together We Are" tracklists, removing newlines
         for line in listOfTracks:
             track = self.parse_line(line, podcast)
             # Test for empty result
