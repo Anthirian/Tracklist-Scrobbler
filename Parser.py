@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 """
 Created on Jul 1, 2012
 
@@ -7,17 +7,19 @@ Created on Jul 1, 2012
 import time
 import re
 
+
 class Parser(object):
     """
     classdocs
     """
+
     def __init__(self):
         """
         Constructor
         """
         self.UNKNOWN = "ID"
         self.USRMOD = "User Modified"
-        
+
         self.ASOT = "Armin van Buuren - A State of Trance"
         self.ABGT = "Above & Beyond - Group Therapy"
         self.GDJB = "Markus Schulz - Global DJ Broadcast"
@@ -35,17 +37,18 @@ class Parser(object):
         self.PP = "Paul Oakenfold - Planet Perfecto"
         self.SI = "Solarstone - Solaris International"
         self.ATWA = "Arty - Together We Are"
-        
+
         self.longShows = [self.ASOT, self.ABGT, self.GDJB]
         self.mediumShows = [self.TAP]
-        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES, self.FSOE, self.GC, self.PP, self.SI, self.ATWA]
-    
+        self.shortShows = [self.TGEP, self.CC, self.AMMM, self.DVTD, self.TCLP, self.JOCS, self.MWMM, self.CES,
+                           self.FSOE, self.GC, self.PP, self.SI, self.ATWA]
+
     def get_supported_podcasts(self):
         """
         Get a list of podcasts that are supported by the parser.
         """
         return self.longShows + self.mediumShows + self.shortShows
-    
+
     def strip_leading_digits(self, head):
         """
         Regex for any combination of multiple digits followed by either a . or a ) and a whitespace
@@ -112,10 +115,11 @@ class Parser(object):
             title = title[:match.start()].strip()
 
         # "Original mixes," "Album somethings" and regular "Club mixes/edits" are not really remixes
-        if re.search("original", remix, flags=re.I) or re.search("album", remix, flags=re.I) or re.match("club (mix|edit)", remix, flags=re.I):
+        if re.search("original", remix, flags=re.I) or re.search("album", remix, flags=re.I) or re.match(
+                "club (mix|edit)", remix, flags=re.I):
             remix = ""
         return title, remix
-    
+
     def find_album(self, title):
         """
         Parse an album mention from the title
@@ -129,10 +133,10 @@ class Parser(object):
             albumNameRegex = re.compile("""['"].*['"]""", flags=re.I)
             albumName = albumNameRegex.search(title[match.start():match.end()])
             if albumName:
-                album = title[match.start() + albumName.start() + 1:match.end()-2]
+                album = title[match.start() + albumName.start() + 1:match.end() - 2]
                 title = title[:match.start()].strip('"').strip()
         return title, album
-    
+
     def find_mashup(self, title):
         """
         Find an incorrectly formatted mashup and split the title into multiple tracks
@@ -148,7 +152,7 @@ class Parser(object):
             track = title[match.end() + 1:]
             print track
         return title1, track
-        
+
     def replace_illegal_characters(self, line):
         """
         Remove any illegal (unicode) characters and replace them with their ASCII counterparts
@@ -161,9 +165,9 @@ class Parser(object):
                 line = line.replace(illegalCharacters[x], replacementCharacters[x])
             else:
                 raise IndexError("The list of illegal characters and their replacements are not equally long!")
-        
+
         return line
-    
+
     def remove_special_track_info(self, line):
         """
         Remove special types indications of a track. These are indicated by a text, followed b
@@ -175,12 +179,8 @@ class Parser(object):
         """
         _, _, track = line.partition(":")
         return track.strip() if track else line
-    
-    
 
-    
-    
-    
+
     def calculate_timestamps(self, tracklist, duration, hours_ago):
         '''
         Calculate timestamps to use when scrobbling multiple tracks
@@ -199,7 +199,7 @@ class Parser(object):
             except TypeError:
                 offset = 0
             numberOfTracks = len(tracklist)
-            
+
             try:
                 trackDuration = totalLength / numberOfTracks
             except ZeroDivisionError:
@@ -210,10 +210,9 @@ class Parser(object):
                     if trackNumber <= numberOfTracks:
                         track['timestamp'] = int(time.time() - offset - totalLength + trackDuration * trackNumber)
                         trackNumber += 1
-                
-        
+
         return tracklist
-    
+
     def parse_line(self, line, podcast):
         """
         Parses a given line into a series of variables to be used in a format_tracks
@@ -221,19 +220,19 @@ class Parser(object):
         """
         album, remix, label = "", "", ""
         trackToScrobble = {}
-        
+
         # Clean up the line before parsing
         line = line.strip()
         line = self.replace_illegal_characters(line)
         line = self.remove_special_track_info(line)
-        
+
         # Check if the line was blank
         if not line:
             return trackToScrobble
-        
+
         if not podcast == self.USRMOD:
             separators = ['"', u' – ', ' - ']
-            
+
             # Split the line into the artist (head) and into the title, album and label (tail)
             for sep in separators:
                 triple = line.partition(sep)
@@ -241,51 +240,51 @@ class Parser(object):
                 # if we have split, tail is non-empty and we should break the loop
                 if tail:
                     break
-            
+
             # If splitting failed for all separators, assume it is not a track and return nothing
             if not tail:
                 return trackToScrobble
-            
+
             # Parse the artist and any featured or presented artists
             artist = self.strip_leading_digits(head)
             artist, featured = self.find_featured_artists(artist)
             artist, presents = self.find_presented_artist(artist)
-            
+
             # Parse the title into title, album, record label and remix and clean up all the parts
             title = tail.strip()
             #title, mashup = self.find_mashup(title)
-            
+
             # 3 Voor 12 Draait doesn't add album, remix and label information to their tracklist, so don't try to parse it
             if not podcast == self.DVTD:
                 title, label = self.find_label(podcast, title)
                 title, album = self.find_album(title)
                 title, remix = self.find_remix(podcast, title)
                 title = title.strip('"')
-            
-            #mashupTrack = self.parse_line(mashup)
+
+                #mashupTrack = self.parse_line(mashup)
         else:
             #TODO: Parse tracks that are already close to the wanted format
             artist, _, title = line.partition("-")
             return []
-        
+
         # Finally add all the gathered information to the track we want to format_tracks
         trackToScrobble['artist'] = artist
         trackToScrobble['featured'] = featured
         trackToScrobble['title'] = title
-        trackToScrobble['remix']= remix
+        trackToScrobble['remix'] = remix
         trackToScrobble['label'] = label
         trackToScrobble['presents'] = presents
         trackToScrobble['album'] = album
-    
+
         # Prevent adding ID's of any kind by zeroing out any track that contains an ID
         for text in trackToScrobble.values():
             if text == self.UNKNOWN or text.find('?') != -1:
                 return {}
-        
+
         return trackToScrobble
-    
+
     def parse_tracklist(self, tracks, podcast, hours_ago):
-        listOfTracks = tracks 
+        listOfTracks = tracks
         tracklist = []
         # TODO: Preprocess "A State of Trance" and "Together We Are" tracklists, removing newlines
         for line in listOfTracks:
@@ -293,7 +292,7 @@ class Parser(object):
             # Test for empty result
             if track:
                 tracklist.append(track)
-        
+
         if podcast in self.longShows:
             duration = 2
         elif podcast in self.mediumShows:
@@ -301,21 +300,21 @@ class Parser(object):
         else:
             duration = 1
         tracklist = self.calculate_timestamps(tracklist, duration, hours_ago)
-        
+
         try:
             self.forLastFM, self.forGUI = self.format_tracks(tracklist)
         except TypeError:
             return [], []
-        
+
         return self.forLastFM, self.forGUI
-    
+
     def parse_user_modifications(self, listOfTracks, podcast, hours_ago):
         '''
         Check if the user has made modifications to the tracks we parsed and create new Last.fm data from it
         '''
         if listOfTracks == self.forGUI:
             return self.forLastFM
-        else:    
+        else:
             data = []
             if podcast in self.longShows:
                 duration = 2
@@ -323,18 +322,18 @@ class Parser(object):
                 duration = 1.5
             else:
                 duration = 1
-                
+
             for line in listOfTracks:
                 track = self.parse_line(line, self.USRMOD)
                 if track:
                     data.append(track)
-                        
+
             data = self.calculate_timestamps(data, duration, hours_ago)
-            
+
             forLastFM, _ = self.format_tracks(data)
-            
+
             return forLastFM
-    
+
     def format_tracks(self, tracklist):
         '''
         Correctly format the track for the GUI and for scrobbling
@@ -346,31 +345,31 @@ class Parser(object):
                     tracktime = track['timestamp']
                 except KeyError:
                     return
-                
+
                 # Build the artist of the track
                 artist = track['artist']
-                
+
                 if track['presents']:
                     artist += " pres. " + track['presents']
-                
+
                 # Build the title of the track
                 title = track['title']
                 if track['featured']:
                     title += " (feat. " + track['featured'] + ")"
                 if track['remix']:
                     title += " (" + track['remix'] + ")"
-                
+
                 album = track['album']
-                
+
                 trackToScrobble = {"artist": artist, "title": title, "timestamp": tracktime, "album": album}
-                
+
                 # Determine the time the track was played to use in writing to the interface
                 (_, _, _, hour, mins, sec, _, _, _) = time.localtime(tracktime)
                 formattedtime = "%02d:%02d:%02d" % (hour, mins, sec)
                 parsedTrack = "%s.  %s - %s" % (formattedtime, artist, title)
-                parsedTrack += (" [%s]" % album) if album else "" 
-                
+                parsedTrack += (" [%s]" % album) if album else ""
+
                 forGUI.append(parsedTrack)
                 forLastFM.append(trackToScrobble)
-        
+
         return forLastFM, forGUI
