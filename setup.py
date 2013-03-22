@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 from distutils.core import setup
 import py2exe
 import sys
@@ -11,6 +13,12 @@ options = {'py2exe': {'bundle_files': 3, 'includes': includes, 'optimize': 2}}
 
 
 def recursive_find_data_files(root_dir, allowed_extensions=tuple('*')):
+    """Recursively finds data files to use while building the executable
+
+    :param root_dir: The root directory at which to start the search
+    :param allowed_extensions: the extensions to add to the list of files
+    :return:
+    """
     to_return = {}
     for (dirpath, dirnames, filenames) in os.walk(root_dir):
         if not filenames:
@@ -42,7 +50,7 @@ setup(
     description='Tracklist Scrobbler',
     windows=[
         {
-            'script': 'Interface.py',
+            'script': 'TracklistScrobbler.py',
             'icon_resources': [(0, "images\\favicon.ico")]
         }
     ],
